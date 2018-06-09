@@ -1,7 +1,13 @@
 #include <util/delay.h>
 
+#include "timeservice.h"
+#include "uart.h"
+
 #include "buses.h"
 #include "globals.h"
+
+#include "geiger.h"
+#include "mq7.h"
 
 void gps_init(){
 	if(gps != NULL) rscs_gps_deinit(gps);
@@ -37,13 +43,11 @@ void ds_init(){
 }
 
 void mq7_init(){
-	ADMUX = (1 << 6); // VCC AREF
-	ADCSRA = (1 << 7) | (1 << 6) | (1 << 5);
+	sides_mq7_init();
 }
 
 void geiger_init(){
-	EIMSK = (1 << 4); // INT4 interrupt enabled
-	EICRB = (1 << 1); // Falling edge
+	sides_geiger_init();
 }
 
 void iridium_init(){
@@ -54,6 +58,10 @@ void iridium_init(){
 void sd_init(){
 	if(sd != NULL) rscs_sd_deinit(sd);
 	//sd = rscs_sd_init(); TODO
+}
+
+void time_init(){
+	rscs_time_init();
 }
 
 void ports_init(){

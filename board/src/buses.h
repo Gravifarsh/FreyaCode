@@ -1,17 +1,5 @@
-/*
- * buses.h
- *
- *  Created on: 09 июня 2018 г.
- *      Author: developer
- */
-
 #ifndef BUSES_H_
 #define BUSES_H_
-
-#include "i2c.h"
-#include "spi.h"
-#include "onewire.h"
-#include "uart.h"
 
 typedef enum{
 	ADXL,

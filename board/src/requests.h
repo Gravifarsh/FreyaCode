@@ -14,5 +14,6 @@ void bmp_request();
 void ds_request();
 void mq7_request();
 void geiger_request();
+void time_request();
 
 #endif /* REQUESTS_H_ */

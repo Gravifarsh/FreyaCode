@@ -20,6 +20,7 @@ void sd_init();
 void nrf_init();
 
 void ports_init();
+void time_init();
 
 
 #endif /* INITS_H_ */

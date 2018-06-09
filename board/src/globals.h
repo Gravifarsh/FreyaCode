@@ -21,6 +21,7 @@ extern rscs_gps_t* gps;
 extern rscs_cdm7160_t* cdm;
 extern rscs_bmp280_descriptor_t* bmp;
 extern rscs_ds18b20_t* ds;
+//exterm rscs_adxl
 
 extern rscs_sdcard_t* sd;
 extern rscs_iridium_t* iridium;

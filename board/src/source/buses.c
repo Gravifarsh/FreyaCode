@@ -1,5 +1,9 @@
 #include "buses.h"
 
+#include "i2c.h"
+#include "spi.h"
+#include "onewire.h"
+
 void i2c_init(){
 	rscs_i2c_init();
 	rscs_i2c_set_scl_rate(1000);

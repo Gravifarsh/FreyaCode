@@ -32,6 +32,8 @@
 								<option id="de.innot.avreclipse.asm.option.include.paths.2047804251" name="#include paths for preprocessor(-I)" superClass="de.innot.avreclipse.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/board/board/rscslib/rscs"/>
 									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/board/board/src"/>
+									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/rscslib/rscs"/>
+									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/src"/>
 								</option>
 								<inputType id="de.innot.avreclipse.tool.assembler.input.1895303613" superClass="de.innot.avreclipse.tool.assembler.input"/>
 							</tool>
@@ -40,6 +42,7 @@
 								<option id="de.innot.avreclipse.compiler.option.optimize.281095402" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.1636442040" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/rscslib/rscs"/>
+									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/sides"/>
 									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/src"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.907982928" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
@@ -64,7 +67,8 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="sides|src|source" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="_source|source|sides|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="sides"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
