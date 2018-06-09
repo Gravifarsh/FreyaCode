@@ -17,11 +17,13 @@
 #include "uart.h"
 
 extern rscs_gps_t* gps;
-extern rscs_sdcard_t* sd;
 extern rscs_cdm7160_t* cdm;
 extern rscs_bmp280_descriptor_t* bmp;
 extern rscs_ds18b20_t* ds;
+
+extern rscs_sdcard_t* sd;
 extern rscs_iridium_t* iridium;
+
 
 
 #endif /* GLOBALS_H_ */

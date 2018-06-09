@@ -33,7 +33,7 @@ void bmp_init(){
 	params.temperature_oversampling = RSCS_BMP280_OVERSAMPLING_X4;
 	params.standbytyme = RSCS_BMP280_STANDBYTIME_250MS;
 
-	rscs_spi_set_pol(RSCS_SPI_POL_SETUP_FALL_SAMPLE_RISE);
+	//rscs_spi_set_pol(RSCS_SPI_POL_SETUP_FALL_SAMPLE_RISE);
 	rscs_bmp280_setup(bmp, &params);
 	rscs_bmp280_changemode(bmp, RSCS_BMP280_MODE_NORMAL);
 }
@@ -41,8 +41,6 @@ void bmp_init(){
 void ds_init(){
 	if(ds != NULL) ds = rscs_ds18b20_deinit(ds);
 	ds = rscs_ds18b20_init(0x00);
-
-	rscs_ds18b20_start_conversion(ds);
 }
 
 void iridium_init(){
