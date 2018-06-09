@@ -21,9 +21,7 @@ typedef struct{
 #pragma pack(pop)
 
 void sd_telemetry_drop();
-
 void iridium_telemetry_drop();
-
 void nrf_telemetry_drop();
 
 #endif /* PACKET_H_ */

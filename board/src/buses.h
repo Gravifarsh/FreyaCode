@@ -8,6 +8,11 @@
 #ifndef BUSES_H_
 #define BUSES_H_
 
+#include "i2c.h"
+#include "spi.h"
+#include "onewire.h"
+#include "uart.h"
+
 typedef enum{
 	ADXL,
 	BMP,

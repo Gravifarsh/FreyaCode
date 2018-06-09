@@ -1,19 +1,11 @@
-/*
- * inits.c
- *
- *  Created on: 08 июня 2018 г.
- *      Author: developer
- */
+#include <util/delay.h>
+
+#include "buses.h"
 #include "globals.h"
 
 void gps_init(){
 	if(gps != NULL) rscs_gps_deinit(gps);
 	gps = rscs_gps_init(RSCS_UART_ID_UART1);
-}
-
-void sd_init(){
-	if(sd != NULL) rscs_sd_deinit(sd);
-	//sd = rscs_sd_init(); TODO
 }
 
 void cdm_init(){
@@ -44,8 +36,56 @@ void ds_init(){
 	ds = rscs_ds18b20_init(0x00);
 }
 
+void mq7_init(){
+	ADMUX = (1 << 6); // VCC AREF
+	ADCSRA = (1 << 7) | (1 << 6) | (1 << 5);
+}
+
+void geiger_init(){
+	EIMSK = (1 << 4); // INT4 interrupt enabled
+	EICRB = (1 << 1); // Falling edge
+}
+
 void iridium_init(){
 	if(iridium != NULL) rscs_iridium9602_deinit(iridium);
 	iridium = rscs_iridium9602_init(RSCS_UART_ID_UART0);
 }
 
+void sd_init(){
+	if(sd != NULL) rscs_sd_deinit(sd);
+	//sd = rscs_sd_init(); TODO
+}
+
+void ports_init(){
+	// All cs output, then down and up
+	DDRB = (1 << 0) | // NRF CS
+		   (1 << 4) | // NRF CE
+		   (1 << 5) | // ADXL CS
+		   (1 << 6) | // BMP CS
+		   (1 << 7);  // SD CS
+	PORTB &= ~((1 << 0) |
+			   (1 << 4) |
+			   (1 << 5) |
+			   (1 << 6) |
+			   (1 << 7));
+	_delay_us(100);
+	PORTB |= (1 << 0) |
+			 (1 << 4) |
+			 (1 << 5) |
+			 (1 << 6) |
+			 (1 << 7);
+
+	// CDM MSEL - Output and down to i2c
+	DDRD |= (1 << 5);
+	PORTD &= ~(1 << 5);
+
+	// IRIDIUM ON/OFF - Output and down to off
+	DDRE |= (1 << 3);
+	PORTE &= ~(1 << 3);
+
+	// GEIGER - Input
+	DDRE &= ~(1 << 4);
+
+	// LED - Output
+	DDRG |= (1 << 3);
+}
