@@ -39,8 +39,8 @@
 								<option id="de.innot.avreclipse.compiler.option.debug.level.1281793592" name="Generate Debugging Info" superClass="de.innot.avreclipse.compiler.option.debug.level" value="de.innot.avreclipse.compiler.option.debug.level.none" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.optimize.281095402" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.1636442040" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/board/board/rscslib/rscs"/>
-									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/board/board/src"/>
+									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/rscslib/rscs"/>
+									<listOptionValue builtIn="false" value="/home/developer/Документы/FreyaCode/board/src"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.907982928" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
@@ -82,5 +82,9 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/board"/>
+		</configuration>
+	</storageModule>
 </cproject>

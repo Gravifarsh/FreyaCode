@@ -12,11 +12,12 @@ void gps_init(){
 }
 
 void sd_init(){
-	//TODO
+	if(sd != NULL) rscs_sd_deinit(sd);
+	//sd = rscs_sd_init(); TODO
 }
 
 void cdm_init(){
-	if(cdm != NULL) //TODO CDM deinit
+	if(cdm != NULL) rscs_cdm7160_deinit(cdm);
 	cdm = rscs_cdm7160_init(RSCS_CDM7160_ADDR_HIGH);
 
 	rscs_cdm7160_reset(cdm);
@@ -39,7 +40,7 @@ void bmp_init(){
 }
 
 void ds_init(){
-	if(ds != NULL) ds = rscs_ds18b20_deinit(ds);
+	if(ds != NULL) rscs_ds18b20_deinit(ds);
 	ds = rscs_ds18b20_init(0x00);
 }
 
