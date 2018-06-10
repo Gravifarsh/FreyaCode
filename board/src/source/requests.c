@@ -3,7 +3,7 @@
 
 #include "timeservice.h"
 
-#include "globals.h"
+#include "../globals.h"
 #include "buses.h"
 
 #include "geiger.h"

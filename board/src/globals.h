@@ -15,7 +15,7 @@
 
 #include "sdcard.h"
 #include "iridium9602.h"
-//#include "nrf24l01.h"
+#include "nrf24l01.h"
 
 extern rscs_gps_t* gps;
 extern rscs_cdm7160_t* cdm;
@@ -25,7 +25,7 @@ extern rscs_ds18b20_t* ds;
 
 extern rscs_sdcard_t* sd;
 extern rscs_iridium_t* iridium;
-//exterm rscs_nrf24l01_t* nrf;
+extern rscs_nrf24l01_bus_t* nrf;
 
 
 

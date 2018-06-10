@@ -60,6 +60,51 @@ void sd_init(){
 	//sd = rscs_sd_init(); TODO
 }
 
+void nrf_init(){
+	rscs_nrf24l01_config_t set;
+	rscs_nrf24l01_get_config(&set, nrf);
+
+	set.config.crc0 = 0;
+	set.config.en_crc = 1;
+	set.config.max_rt = 0;
+	set.config.rx_dr = 0;
+	set.config.tx_ds = 0;
+	set.config.pwr_up = 1;
+	set.config.prim_rx = 0;
+
+	set.feature.en_ack_pay = 1;
+	set.feature.en_dpl = 1;
+	set.feature.en_dyn_ack = 1;
+
+	set.rf_ch.rf_ch = 2;
+
+	set.rf_setup.pll_lock = 0;
+	set.rf_setup.rf_dr = 1;
+	set.rf_setup.rf_pwr = 3;
+	set.rf_setup.lna_hcurr = 1;
+
+	set.setup_aw.aw = 3;
+
+	set.setup_retr.arc = 2;
+	set.setup_retr.ard = 2;
+
+	set.tx.addr = 0x1122334455;
+
+	rscs_nrf24l01_set_config(set, nrf);
+
+	rscs_nrf24l01_pipe_config_t pipe;
+	pipe.num = 0;
+	rscs_nrf24l01_get_pipe_config(&pipe, nrf);
+
+	pipe.en = 1;
+	pipe.en_aa = 1;
+	pipe.en_dpl = 1;
+	pipe.pw = 0;
+	pipe.rx_addr = 0x1122334455;
+
+	rscs_nrf24l01_set_pipe_config(pipe, nrf);
+}
+
 void time_init(){
 	rscs_time_init();
 }
