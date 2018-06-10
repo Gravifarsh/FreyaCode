@@ -33,6 +33,11 @@ void ds_request(int16_t* dtemp){
 	}
 }
 
+void adxl_request(float* x, float* y, float* z){
+	int16_t rx, ry, rz;
+	rscs_adxl345_GetGXYZ(adxl, &rx, &ry, &rz, x, y, z);
+}
+
 void mq7_request(uint16_t* mconc){
 	*mconc = sides_mq7_get();
 }

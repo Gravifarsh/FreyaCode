@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <util/delay.h>
 
 #include <avr/interrupt.h>
 
@@ -19,14 +20,17 @@ int main(){
 	i2c_init();
 	ow_init();
 
+	gps_init();
 	cdm_init();
 	ds_init();
 	mq7_init();
 	geiger_init();
-	gps_init();
 
 	spi_set(BMP);
 	bmp_init();
+
+	spi_set(ADXL);
+	adxl_init();
 
 
 	int32_t bpress, btemp;
@@ -34,6 +38,7 @@ int main(){
 	uint16_t conc;
 	uint16_t mconc;
 	uint32_t ticks;
+	float x, y, z;
 	float lon, lat, h;
 	bool hasFix;
 
@@ -55,6 +60,7 @@ int main(){
 		mq7_request(&mconc);
 		geiger_request(&ticks);
 		gps_request(&lon, &lat, &h, &hasFix);
+		adxl_request(&x, &y, &z);
 
 		time_request(&time);
 
@@ -64,11 +70,11 @@ int main(){
 		printf("MQ7 %d\n", mconc);
 		printf("GEIGER %ld\n", ticks);
 		printf("GPS %f %f %f %d\n", lon, lat, h, hasFix);
+		printf("ADXL %f %f %f\n", x, y, z);
 
 		printf("TIME %ld\n\n\n", time);
+
+		_delay_ms(1000);
 	}
-
-
-
 	return 0;
 }

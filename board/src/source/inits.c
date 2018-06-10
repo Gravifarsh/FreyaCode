@@ -32,7 +32,6 @@ void bmp_init(){
 	params.temperature_oversampling = RSCS_BMP280_OVERSAMPLING_X4;
 	params.standbytyme = RSCS_BMP280_STANDBYTIME_250MS;
 
-	//rscs_spi_set_pol(RSCS_SPI_POL_SETUP_FALL_SAMPLE_RISE);
 	rscs_bmp280_setup(bmp, &params);
 	rscs_bmp280_changemode(bmp, RSCS_BMP280_MODE_NORMAL);
 }
@@ -40,6 +39,15 @@ void bmp_init(){
 void ds_init(){
 	if(ds != NULL) rscs_ds18b20_deinit(ds);
 	ds = rscs_ds18b20_init(0x00);
+}
+
+void adxl_init(){
+	if(adxl != NULL) rscs_adxl345_deinit(adxl);
+	adxl = rscs_adxl345_initspi(&PORTB, 5);
+
+	rscs_adxl345_startup(adxl);
+	rscs_adxl345_set_rate(adxl, RSCS_ADXL345_RATE_200HZ);
+	rscs_adxl345_set_range(adxl, RSCS_ADXL345_RANGE_2G);
 }
 
 void mq7_init(){
@@ -57,10 +65,15 @@ void iridium_init(){
 
 void sd_init(){
 	if(sd != NULL) rscs_sd_deinit(sd);
-	//sd = rscs_sd_init(); TODO
+	sd = rscs_sd_init(&DDRB, &PORTB, (1 << 7));
+
+	rscs_sd_startup(sd);
 }
 
 void nrf_init(){
+	if(nrf != NULL) rscs_nrf24l01_deinit(nrf);
+	nrf = rscs_nrf24l01_init(rscs_spi_do, &PORTB, 0, &PORTB, 4);
+
 	rscs_nrf24l01_config_t set;
 	rscs_nrf24l01_get_config(&set, nrf);
 

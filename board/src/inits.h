@@ -12,6 +12,7 @@ void gps_init();
 void cdm_init();
 void bmp_init();
 void ds_init();
+void adxl_init();
 void mq7_init();
 void geiger_init();
 
