@@ -15,7 +15,7 @@ void ow_init(){
 
 void spi_init(){
 	rscs_spi_init();
-	rscs_spi_set_clk(1000);
+	rscs_spi_set_clk(16000);
 	rscs_spi_set_order(RSCS_SPI_ORDER_MSB_FIRST);
 }
 
