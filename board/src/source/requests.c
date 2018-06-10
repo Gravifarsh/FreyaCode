@@ -1,8 +1,13 @@
 #include <stdbool.h>
 #include <inttypes.h>
 
+#include "timeservice.h"
+
 #include "globals.h"
 #include "buses.h"
+
+#include "geiger.h"
+#include "mq7.h"
 
 void gps_request(){
 	float lon, lat, h;
@@ -36,13 +41,16 @@ void ds_request(){
 }
 
 void mq7_request(){
-
+	uint16_t mconc; //TODO
+	mconc = sides_mq7_get();
 }
 
 void geiger_request(){
-
+	uint32_t ticks; //TODO
+	ticks = sides_gegiger_get_ticks();
 }
 
 void time_request(){
-
+	uint32_t time; //TODO
+	time = rscs_time_get();
 }
