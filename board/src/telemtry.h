@@ -13,6 +13,8 @@
 #define IRIDIUM_BUFFER_SIZE 64
 #define SD_BUFFER_SIZE 512
 
+#define SD_MAX_BLOCKS 14300
+
 size_t sd_telemetry_drop(void* data, size_t datasize);
 size_t iridium_telemetry_drop(void* data, size_t datasize);
 size_t nrf_telemetry_drop(void* data, size_t datasize);

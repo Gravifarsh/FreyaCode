@@ -31,6 +31,8 @@ size_t sd_telemetry_drop(void* data, size_t datasize){
 		sd_buffer_need_init = false;
 	}
 
+	if(sd_buffer.block > SD_MAX_BLOCKS) return 0;
+
 	if(SD_BUFFER_SIZE - sd_buffer.carret> datasize)
 	{
 		for(int i = 0; i < datasize; i++)
