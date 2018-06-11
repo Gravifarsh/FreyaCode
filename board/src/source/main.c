@@ -12,17 +12,34 @@
 #include "buses.h"
 
 #pragma pack(push, 1)
-typedef struct{
-	int32_t bpress, btemp;
-	int16_t dtemp;
-	uint16_t conc;
-	uint16_t mconc;
-	uint32_t ticks;
-	float x, y, z;
-	float lon, lat, h;
-	bool hasFix;
-
+typedef union{
+	uint8_t flag;
 	uint32_t time;
+
+	union{
+		struct{
+			int32_t bpress, btemp;
+			int16_t dtemp;
+			float x, y, z;
+		} standard;
+
+		struct{
+			uint16_t conc;
+			uint16_t mconc;
+			uint32_t ticks;
+			float lon, lat, h;
+		} advanced;
+
+		struct{
+			int32_t bpress, btemp;
+			int16_t dtemp;
+			float x, y, z;
+			uint16_t conc;
+			uint16_t mconc;
+			uint32_t ticks;
+			float lon, lat, h;
+		} full;
+	};
 } packet_t;
 #pragma pack(pop)
 
@@ -46,9 +63,11 @@ int main(){
 
 	sd_init();
 	nrf_init();
+	iridium_init();
 
 	packet_t pack;
 
+	/*
 	rscs_uart_bus_t *uart = rscs_uart_init(RSCS_UART_ID_UART0,
 												RSCS_UART_FLAG_ENABLE_TX | RSCS_UART_FLAG_BUFFER_TX);
 	rscs_uart_set_character_size(uart, 8);
@@ -56,8 +75,50 @@ int main(){
 	rscs_uart_set_parity(uart, RSCS_UART_PARITY_NONE);
 	rscs_uart_set_stop_bits(uart, RSCS_UART_STOP_BITS_ONE);
 	stdin = stdout = rscs_make_uart_stream(uart);
+	*/
 
 	while(1){
+		PORTG |= (1 << 3);
+
+
+		pack.flag = 0x57;
+
+		bmp_request(&pack.standard.bpress, &pack.standard.btemp);
+		ds_request(&pack.standard.dtemp);
+		adxl_request(&pack.standard.x, &pack.standard.y, &pack.standard.z);
+
+		time_request(&pack.time);
+
+		nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.standard));
+
+
+		pack.flag = 0xad;
+
+		cdm_request(&pack.advanced.conc);
+		mq7_request(&pack.advanced.mconc);
+		geiger_request(&pack.advanced.ticks);
+		gps_request(&pack.advanced.lon, &pack.advanced.lat, &pack.advanced.h);
+
+		time_request(&pack.time);
+
+		sd_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.advanced));
+
+
+		PORTG &= ~(1 << 3);
+
+
+		bmp_request(&pack.full.bpress, &pack.full.btemp);
+		ds_request(&pack.full.dtemp);
+		adxl_request(&pack.full.x, &pack.full.y, &pack.full.z);
+		cdm_request(&pack.full.conc);
+		mq7_request(&pack.full.mconc);
+		geiger_request(&pack.full.ticks);
+		gps_request(&pack.full.lon, &pack.full.lat, &pack.full.h);
+
+		iridium_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
+
+
+		/*
 		bmp_request(&pack.bpress, &pack.btemp);
 		ds_request(&pack.dtemp);
 		cdm_request(&pack.conc);
@@ -76,13 +137,14 @@ int main(){
 		printf("GPS %f %f %f %d\n", pack.lon, pack.lat, pack.h, pack.hasFix);
 		printf("ADXL %f %f %f\n", pack.x, pack.y, pack.z);
 
-		printf("TIME %ld\n", pack.time);
 
+		printf("TIME %ld\n", pack.time);
 		char str[] = "OMG IM STRING THAT WILL BE ON SD! ^^";
 		printf("WRITED %d\n\n\n", sd_telemetry_drop(str, sizeof(str)));
-		//printf("WRITED NRF %d\n\n\n", nrf_telemetry_drop(&pack, sizeof(pack)));
+		printf("WRITED NRF %d\n\n\n", nrf_telemetry_drop(&pack, sizeof(pack)));
 
-		//_delay_ms(1000);
+		_delay_ms(1000);
+		*/
 	}
 	return 0;
 }
