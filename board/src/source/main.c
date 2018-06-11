@@ -80,7 +80,6 @@ int main(){
 	while(1){
 		PORTG |= (1 << 3);
 
-
 		pack.flag = 0x57;
 
 		bmp_request(&pack.standard.bpress, &pack.standard.btemp);
@@ -101,10 +100,22 @@ int main(){
 
 		time_request(&pack.time);
 
-		sd_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.advanced));
+		nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.advanced));
 
 
 		PORTG &= ~(1 << 3);
+
+		pack.flag = 0xa1;
+
+		bmp_request(&pack.full.bpress, &pack.full.btemp);
+		ds_request(&pack.full.dtemp);
+		adxl_request(&pack.full.x, &pack.full.y, &pack.full.z);
+		cdm_request(&pack.full.conc);
+		mq7_request(&pack.full.mconc);
+		geiger_request(&pack.full.ticks);
+		gps_request(&pack.full.lon, &pack.full.lat, &pack.full.h);
+
+		sd_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
 
 
 		bmp_request(&pack.full.bpress, &pack.full.btemp);
