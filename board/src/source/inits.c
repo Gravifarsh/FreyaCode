@@ -32,6 +32,8 @@ void bmp_init(){
 	params.temperature_oversampling = RSCS_BMP280_OVERSAMPLING_X4;
 	params.standbytyme = RSCS_BMP280_STANDBYTIME_250MS;
 
+	spi_set(BMP);
+
 	rscs_bmp280_setup(bmp, &params);
 	rscs_bmp280_changemode(bmp, RSCS_BMP280_MODE_NORMAL);
 }
@@ -44,6 +46,8 @@ void ds_init(){
 void adxl_init(){
 	if(adxl != NULL) rscs_adxl345_deinit(adxl);
 	adxl = rscs_adxl345_initspi(&PORTB, 5);
+
+	spi_set(ADXL);
 
 	rscs_adxl345_startup(adxl);
 	rscs_adxl345_set_rate(adxl, RSCS_ADXL345_RATE_200HZ);
@@ -74,6 +78,8 @@ void nrf_init(){
 	if(nrf != NULL) rscs_nrf24l01_deinit(nrf);
 	nrf = rscs_nrf24l01_init(rscs_spi_do, &PORTB, 0, &PORTB, 4);
 
+	spi_set(NRF);
+
 	rscs_nrf24l01_config_t set;
 	rscs_nrf24l01_get_config(&set, nrf);
 
@@ -98,8 +104,8 @@ void nrf_init(){
 
 	set.setup_aw.aw = 3;
 
-	set.setup_retr.arc = 2;
-	set.setup_retr.ard = 2;
+	set.setup_retr.arc = 7;
+	set.setup_retr.ard = 7;
 
 	set.tx.addr = 0x1122334455;
 
@@ -123,7 +129,7 @@ void time_init(){
 }
 
 void ports_init(){
-	// All cs output, then down and up
+	// All cs and ce output, then down and up
 	DDRB = (1 << 0) | // NRF CS
 		   (1 << 4) | // NRF CE
 		   (1 << 5) | // ADXL CS

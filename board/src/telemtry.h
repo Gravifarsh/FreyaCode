@@ -10,7 +10,7 @@
 
 #include <stddef.h>
 
-#define IRIDIUM_BUFFER_SIZE 350
+#define IRIDIUM_BUFFER_SIZE 64
 #define SD_BUFFER_SIZE 512
 
 size_t sd_telemetry_drop(void* data, size_t datasize);

@@ -22,7 +22,7 @@ void spi_set(spi_mode_t mode){
 	switch(mode){
 	case BMP:
 	case ADXL:
-		rscs_spi_set_clk(1600);
+		rscs_spi_set_clk(400);
 		rscs_spi_set_pol(RSCS_SPI_POL_SETUP_FALL_SAMPLE_RISE);
 		break;
 	case NRF:

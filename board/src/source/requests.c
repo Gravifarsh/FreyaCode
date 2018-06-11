@@ -18,9 +18,9 @@ void cdm_request(uint16_t* conc){
 }
 
 void bmp_request(int32_t* bpress, int32_t* btemp){
-	spi_set(BMP);
-
 	int32_t rbpress, rbtemp;
+
+	spi_set(BMP);
 
 	rscs_bmp280_read(bmp, &rbpress, &rbtemp);
 	rscs_bmp280_calculate(rscs_bmp280_get_calibration_values(bmp), rbpress, rbtemp, bpress, btemp);
@@ -35,6 +35,9 @@ void ds_request(int16_t* dtemp){
 
 void adxl_request(float* x, float* y, float* z){
 	int16_t rx, ry, rz;
+
+	spi_set(ADXL);
+
 	rscs_adxl345_GetGXYZ(adxl, &rx, &ry, &rz, x, y, z);
 }
 

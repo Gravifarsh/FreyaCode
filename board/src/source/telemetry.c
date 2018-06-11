@@ -1,7 +1,13 @@
 #include <inttypes.h>
+#include <stdbool.h>
 
 #include "globals.h"
 #include "telemtry.h"
+#include "buses.h"
+#include "inits.h"
+
+bool sd_buffer_need_init = true;
+bool iridium_buffer_need_init = true;
 
 struct{
 	uint8_t buffer[SD_BUFFER_SIZE];
@@ -16,7 +22,50 @@ struct{
 
 
 size_t sd_telemetry_drop(void* data, size_t datasize){
-	return 0;
+	if(sd_buffer_need_init){
+		sd_buffer.carret = 0;
+		sd_buffer.block = 0;
+
+		sd_buffer_need_init = false;
+	}
+
+
+	if(SD_BUFFER_SIZE - sd_buffer.carret > datasize)
+	{
+		for(int i = 0; i < datasize; i++)
+		{
+			sd_buffer.buffer[sd_buffer.carret++] = *((uint8_t*)data + i);
+		}
+		return datasize;
+	}
+	else
+	{
+		int last = 512 - sd_buffer.carret;
+
+		for(int i = 0; i < last; i++)
+		{
+			sd_buffer.buffer[sd_buffer.carret++] = *((uint8_t*)data + i);
+		}
+
+		spi_set(SD);
+
+		if(rscs_sd_block_write(sd, sd_buffer.block, sd_buffer.buffer, 1)){
+			spi_init();
+
+			return last;
+		}
+		else{
+			sd_buffer.block += 512;
+			sd_buffer.carret = 0;
+
+			for(int i = last; i < datasize; i++)
+			{
+				sd_buffer.buffer[sd_buffer.carret++] = *((uint8_t*)data + i);
+			}
+
+			return datasize;
+		}
+	}
 }
 
 size_t iridium_telemetry_drop(void* data, size_t datasize){
@@ -24,5 +73,6 @@ size_t iridium_telemetry_drop(void* data, size_t datasize){
 }
 
 size_t nrf_telemetry_drop(void* data, size_t datasize){
-	return 0;
+	spi_set(NRF);
+	return rscs_nrf24l01_write(nrf, data, datasize);
 }
