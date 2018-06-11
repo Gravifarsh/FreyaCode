@@ -116,8 +116,8 @@
 // ========================================================
 // Использовать ли буферизацию
 #define RSCS_UART_USEBUFFERS // Добавить код для поддержки циклических буферов в UART
-#define RSCS_UART_BUFSIZE_RX 64 // размер буфера на RX
-#define RSCS_UART_BUFSIZE_TX 256 // размер буфера на TX
+#define RSCS_UART_BUFSIZE_RX 128 // размер буфера на RX
+#define RSCS_UART_BUFSIZE_TX 32 // размер буфера на TX
 
 
 

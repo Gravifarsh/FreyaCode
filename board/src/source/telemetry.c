@@ -21,6 +21,8 @@ struct{
 } iridium_buffer;
 
 
+#include <stdio.h>
+
 size_t sd_telemetry_drop(void* data, size_t datasize){
 	if(sd_buffer_need_init){
 		sd_buffer.carret = 0;
@@ -29,8 +31,7 @@ size_t sd_telemetry_drop(void* data, size_t datasize){
 		sd_buffer_need_init = false;
 	}
 
-
-	if(SD_BUFFER_SIZE - sd_buffer.carret > datasize)
+	if(SD_BUFFER_SIZE - sd_buffer.carret> datasize)
 	{
 		for(int i = 0; i < datasize; i++)
 		{
@@ -40,7 +41,7 @@ size_t sd_telemetry_drop(void* data, size_t datasize){
 	}
 	else
 	{
-		int last = 512 - sd_buffer.carret;
+		uint16_t last = SD_BUFFER_SIZE - sd_buffer.carret;
 
 		for(int i = 0; i < last; i++)
 		{
@@ -49,13 +50,16 @@ size_t sd_telemetry_drop(void* data, size_t datasize){
 
 		spi_set(SD);
 
-		if(rscs_sd_block_write(sd, sd_buffer.block, sd_buffer.buffer, 1)){
-			spi_init();
+		int error = rscs_sd_block_write(sd, sd_buffer.block, sd_buffer.buffer, 1);
+		printf("%d\n", error);
+
+		if(error){
+			sd_init();
 
 			return last;
 		}
 		else{
-			sd_buffer.block += 512;
+			sd_buffer.block++;
 			sd_buffer.carret = 0;
 
 			for(int i = last; i < datasize; i++)

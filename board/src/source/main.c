@@ -44,6 +44,7 @@ int main(){
 	bmp_init();
 	adxl_init();
 
+	sd_init();
 	nrf_init();
 
 	packet_t pack;
@@ -81,7 +82,7 @@ int main(){
 		printf("WRITED %d\n\n\n", sd_telemetry_drop(str, sizeof(str)));
 		//printf("WRITED NRF %d\n\n\n", nrf_telemetry_drop(&pack, sizeof(pack)));
 
-		_delay_ms(1000);
+		//_delay_ms(1000);
 	}
 	return 0;
 }
