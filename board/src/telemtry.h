@@ -10,7 +10,7 @@
 
 #include <stddef.h>
 
-#define IRIDIUM_BUFFER_SIZE 64
+#define IRIDIUM_BUFFER_SIZE 360
 #define SD_BUFFER_SIZE 512
 
 #define SD_MAX_BLOCKS 14300

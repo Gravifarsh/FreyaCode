@@ -12,7 +12,7 @@
 #include "buses.h"
 
 #pragma pack(push, 1)
-typedef union{
+typedef struct{
 	uint8_t flag;
 	uint32_t time;
 
@@ -28,6 +28,7 @@ typedef union{
 			uint16_t mconc;
 			uint32_t ticks;
 			float lon, lat, h;
+			bool fix;
 		} advanced;
 
 		struct{
@@ -38,6 +39,7 @@ typedef union{
 			uint16_t mconc;
 			uint32_t ticks;
 			float lon, lat, h;
+			bool fix;
 		} full;
 	};
 } packet_t;
@@ -69,7 +71,8 @@ int main(){
 
 	/*
 	rscs_uart_bus_t *uart = rscs_uart_init(RSCS_UART_ID_UART0,
-												RSCS_UART_FLAG_ENABLE_TX | RSCS_UART_FLAG_BUFFER_TX);
+												RSCS_UART_FLAG_ENABLE_TX | RSCS_UART_FLAG_BUFFER_TX |
+												RSCS_UART_FLAG_ENABLE_RX | RSCS_UART_FLAG_BUFFER_RX);
 	rscs_uart_set_character_size(uart, 8);
 	rscs_uart_set_baudrate(uart, 19200);
 	rscs_uart_set_parity(uart, RSCS_UART_PARITY_NONE);
@@ -88,6 +91,15 @@ int main(){
 
 		time_request(&pack.time);
 
+		/*
+		printf("STANDARD %d\n", pack.flag);
+		printf("\tTIME %ld\n", pack.time);
+		printf("\tBMP %ld %ld\n", pack.standard.bpress, pack.standard.btemp);
+		printf("\tDS %d\n", pack.standard.dtemp);
+		printf("\tADXL %f %f %f\n", pack.standard.x, pack.standard.y, pack.standard.z);
+		printf("\tSIZE %d\n", sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.standard));
+		*/
+
 		nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.standard));
 
 
@@ -96,16 +108,26 @@ int main(){
 		cdm_request(&pack.advanced.conc);
 		mq7_request(&pack.advanced.mconc);
 		geiger_request(&pack.advanced.ticks);
-		gps_request(&pack.advanced.lon, &pack.advanced.lat, &pack.advanced.h);
+		gps_request(&pack.advanced.lon, &pack.advanced.lat, &pack.advanced.h, &pack.advanced.fix);
 
 		time_request(&pack.time);
+
+		/*
+		printf("ADVANCED %d\n", pack.flag);
+		printf("\tTIME %ld\n", pack.time);
+		printf("\tCDM %u\n", pack.advanced.conc);
+		printf("\tMQ7 %d\n", pack.advanced.mconc);
+		printf("\tGEIGER %ld\n", pack.advanced.ticks);
+		printf("\tGPS %f %f %f %d\n", pack.advanced.lon, pack.advanced.lat, pack.advanced.h, pack.advanced.fix);
+		printf("\tSIZE %d\n", sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.advanced));
+		*/
 
 		nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.advanced));
 
 
 		PORTG &= ~(1 << 3);
 
-		pack.flag = 0xa1;
+		pack.flag = 0xf4;
 
 		bmp_request(&pack.full.bpress, &pack.full.btemp);
 		ds_request(&pack.full.dtemp);
@@ -113,7 +135,20 @@ int main(){
 		cdm_request(&pack.full.conc);
 		mq7_request(&pack.full.mconc);
 		geiger_request(&pack.full.ticks);
-		gps_request(&pack.full.lon, &pack.full.lat, &pack.full.h);
+		gps_request(&pack.full.lon, &pack.full.lat, &pack.full.h, &pack.full.fix);
+
+		/*
+		printf("FULL %d\n", pack.flag);
+		printf("\tTIME %ld\n", pack.time);
+		printf("\tBMP %ld %ld\n", pack.full.bpress, pack.full.btemp);
+		printf("\tDS %d\n", pack.full.dtemp);
+		printf("\tADXL %f %f %f\n", pack.full.x, pack.full.y, pack.full.z);
+		printf("\tCDM %u\n", pack.full.conc);
+		printf("\tMQ7 %d\n", pack.full.mconc);
+		printf("\tGEIGER %ld\n", pack.full.ticks);
+		printf("\tGPS %f %f %f %d\n", pack.full.lon, pack.full.lat, pack.full.h, pack.full.fix);
+		printf("\tSIZE %d\n", sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
+		*/
 
 		sd_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
 
@@ -124,38 +159,9 @@ int main(){
 		cdm_request(&pack.full.conc);
 		mq7_request(&pack.full.mconc);
 		geiger_request(&pack.full.ticks);
-		gps_request(&pack.full.lon, &pack.full.lat, &pack.full.h);
+		gps_request(&pack.full.lon, &pack.full.lat, &pack.full.h, &pack.full.fix);
 
 		iridium_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
-
-
-		/*
-		bmp_request(&pack.bpress, &pack.btemp);
-		ds_request(&pack.dtemp);
-		cdm_request(&pack.conc);
-		mq7_request(&pack.mconc);
-		geiger_request(&pack.ticks);
-		gps_request(&pack.lon, &pack.lat, &pack.h, &pack.hasFix);
-		adxl_request(&pack.x, &pack.y, &pack.z);
-
-		time_request(&pack.time);
-
-		printf("BMP %ld %ld\n", pack.bpress, pack.btemp);
-		printf("DS %d\n", pack.dtemp);
-		printf("CDM %d\n", pack.conc);
-		printf("MQ7 %d\n", pack.mconc);
-		printf("GEIGER %ld\n", pack.ticks);
-		printf("GPS %f %f %f %d\n", pack.lon, pack.lat, pack.h, pack.hasFix);
-		printf("ADXL %f %f %f\n", pack.x, pack.y, pack.z);
-
-
-		printf("TIME %ld\n", pack.time);
-		char str[] = "OMG IM STRING THAT WILL BE ON SD! ^^";
-		printf("WRITED %d\n\n\n", sd_telemetry_drop(str, sizeof(str)));
-		printf("WRITED NRF %d\n\n\n", nrf_telemetry_drop(&pack, sizeof(pack)));
-
-		_delay_ms(1000);
-		*/
 	}
 	return 0;
 }

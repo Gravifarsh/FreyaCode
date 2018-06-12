@@ -9,9 +9,8 @@
 #include "geiger.h"
 #include "mq7.h"
 
-void gps_request(float* lon, float* lat, float* h){
-	bool hasFix;
-	rscs_gps_read(gps, lon, lat, h, &hasFix);
+void gps_request(float* lon, float* lat, float* h, bool* hasFix){
+	rscs_gps_read(gps, lon, lat, h, hasFix);
 }
 
 void cdm_request(uint16_t* conc){

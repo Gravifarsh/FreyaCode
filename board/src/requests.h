@@ -8,7 +8,7 @@
 #ifndef REQUESTS_H_
 #define REQUESTS_H_
 
-void gps_request(float* lon, float* lat, float* h);
+void gps_request(float* lon, float* lat, float* h, bool* hasFix);
 
 void cdm_request(uint16_t* conc);
 

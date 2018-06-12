@@ -41,6 +41,8 @@ void bmp_init(){
 void ds_init(){
 	if(ds != NULL) rscs_ds18b20_deinit(ds);
 	ds = rscs_ds18b20_init(0x00);
+
+	rscs_ds18b20_start_conversion(ds);
 }
 
 void adxl_init(){
@@ -153,7 +155,7 @@ void ports_init(){
 
 	// IRIDIUM ON/OFF - Output and down to off
 	DDRE |= (1 << 3);
-	PORTE &= ~(1 << 3);
+	PORTE |= (1 << 3);
 
 	// GEIGER - Input
 	DDRE &= ~(1 << 4);
