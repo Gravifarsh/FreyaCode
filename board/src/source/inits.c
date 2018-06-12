@@ -85,6 +85,8 @@ void nrf_init(){
 	rscs_nrf24l01_config_t set;
 	rscs_nrf24l01_get_config(&set, nrf);
 
+	// Смотри даташит
+
 	set.config.crc0 = 0;
 	set.config.en_crc = 1;
 	set.config.max_rt = 0;
@@ -153,7 +155,7 @@ void ports_init(){
 	DDRD |= (1 << 5);
 	PORTD &= ~(1 << 5);
 
-	// IRIDIUM ON/OFF - Output and down to off
+	// IRIDIUM ON/OFF - Output and up to ON
 	DDRE |= (1 << 3);
 	PORTE |= (1 << 3);
 

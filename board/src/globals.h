@@ -18,15 +18,15 @@
 #include "iridium9602.h"
 #include "nrf24l01.h"
 
-extern rscs_gps_t* gps;
-extern rscs_cdm7160_t* cdm;
-extern rscs_bmp280_descriptor_t* bmp;
-extern rscs_ds18b20_t* ds;
-extern rscs_adxl345_t* adxl;
+extern rscs_gps_t* gps; // GPS
+extern rscs_cdm7160_t* cdm; // CDM
+extern rscs_bmp280_descriptor_t* bmp; // BMP
+extern rscs_ds18b20_t* ds; // DS
+extern rscs_adxl345_t* adxl; // ADXL
 
-extern rscs_sdcard_t* sd;
-extern rscs_iridium_t* iridium;
-extern rscs_nrf24l01_bus_t* nrf;
+extern rscs_sdcard_t* sd; // SD
+extern rscs_iridium_t* iridium; // IRIDIUM
+extern rscs_nrf24l01_bus_t* nrf; // NRF
 
 
 
