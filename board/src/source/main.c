@@ -46,11 +46,21 @@ typedef struct{
 } packet_t;
 #pragma pack(pop)
 
+// Раскомментировать для debug on uart0
+// #define DEBUG_PRINT
+
 int main(){
 /* ИНИЦИАЛИЗАЦИЯ */
 	sei(); // Включение прерываний
 
 	ports_init(); // Настройка портов
+
+	/*
+	DDRE &= ~((1 << 0) | (1 << 1));
+
+	while(1) {PORTG ^= (1 << 3); _delay_ms(1000);}
+	*/
+
 	time_init(); // Инициализация TIMESERVICE
 
 	spi_init(); // Иициализация SPI

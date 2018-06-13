@@ -20,22 +20,6 @@ struct{
 	uint32_t block;
 } sd_buffer;
 
-struct{
-	uint8_t buffer[IRIDIUM_BUFFER_SIZE];
-	uint16_t carret;
-	// Состояние
-	enum{
-		STARTING,
-		WRITING,
-		SENDING
-	}state;
-
-	// Время последнего занесения в буфер данных
-	uint32_t last;
-} iridium_buffer;
-
-
-#include <stdio.h>
 
 size_t sd_telemetry_drop(void* data, size_t datasize){
 	// Инициализируем буфер, если необходимо
@@ -96,11 +80,25 @@ size_t sd_telemetry_drop(void* data, size_t datasize){
 	}
 }
 
+struct{
+	uint8_t buffer[IRIDIUM_BUFFER_SIZE];
+	uint16_t carret;
+	// Состояние
+	enum{
+		WRITING,
+		SENDING,
+		ACCUMULATING
+	}state;
+
+	// Время последнего занесения в буфер данных
+	uint32_t last;
+} iridium_buffer;
+
 size_t iridium_telemetry_drop(void* data, size_t datasize){
 	// Инициализируем буфер, если необходимо
 	if(iridium_buffer_need_init){
 		iridium_buffer.carret = 0;
-		iridium_buffer.state = STARTING;
+		iridium_buffer.state = ACCUMULATING;
 		iridium_buffer.last = rscs_time_get();
 
 		iridium_buffer_need_init = false;
@@ -109,8 +107,8 @@ size_t iridium_telemetry_drop(void* data, size_t datasize){
 	size_t writed = 0;
 
 	switch(iridium_buffer.state){
-	// Если мы только начали: буфер пуст и нет текущей посылки в иридиум
-	case STARTING:
+	// Аккумулируем данные для следующей посылки
+	case ACCUMULATING:
 		// Если пакет полностью влезает в буфер - записываем
 		if(IRIDIUM_BUFFER_SIZE - iridium_buffer.carret >= datasize){
 			for(int i = 0; i < datasize; i++){
@@ -124,6 +122,7 @@ size_t iridium_telemetry_drop(void* data, size_t datasize){
 			writed = 0;
 		}
 		break;
+	// Записываем в иридиум весь буфер, что у нас есть
 	case WRITING:
 	{
 		// Пытаемся записать иридиуму данные
@@ -136,13 +135,15 @@ size_t iridium_telemetry_drop(void* data, size_t datasize){
 		writed = 0;
 	}
 		break;
+	// Отсылаем данные
 	case SENDING:
 	{
 		// Пытаемся послать
 		rscs_e error = rscs_iridium9602_send(iridium);
 		if(error == RSCS_E_NONE){
-			// Если удача - переходим к записи, нельзя терять время!
-			iridium_buffer.state = WRITING;
+			// Если удача и в буфере есть место - заполняем его
+			// Если удача и в буфере нет места - записываем его
+			iridium_buffer.state = (IRIDIUM_BUFFER_SIZE - iridium_buffer.carret) >= datasize ? ACCUMULATING : WRITING;
 			writed = 0;
 		}
 		else{
