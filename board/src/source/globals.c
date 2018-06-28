@@ -1,4 +1,4 @@
-#include "globals.h"
+#include "../globals.h"
 
 rscs_gps_t* gps = NULL;
 rscs_cdm7160_t* cdm = NULL;

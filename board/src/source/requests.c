@@ -6,8 +6,10 @@
 #include "../globals.h"
 #include "buses.h"
 
-#include "geiger.h"
-#include "mq7.h"
+#include "../sides/geiger.h"
+#include "../sides/mq7.h"
+
+static uint32_t _persistent_ticks = 0;
 
 void gps_request(float* lon, float* lat, float* h, bool* hasFix){
 	rscs_gps_read(gps, lon, lat, h, hasFix);
@@ -46,7 +48,12 @@ void mq7_request(uint16_t* mconc){
 }
 
 void geiger_request(uint32_t* ticks){
-	*ticks = sides_gegiger_get_ticks();
+	//*ticks = sides_gegiger_get_total_ticks();
+	uint32_t current_ticks = sides_geiger_get_uRh();
+	if (current_ticks != 0)
+		_persistent_ticks = current_ticks;
+
+	*ticks = _persistent_ticks;
 }
 
 void time_request(uint32_t* time){

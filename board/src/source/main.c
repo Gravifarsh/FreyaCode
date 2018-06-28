@@ -6,6 +6,9 @@
 #include "stdext/stdio.h"
 #include "uart.h"
 
+#include "../sides/geiger.h"
+#include "../sides/mq7.h"
+
 #include "inits.h"
 #include "requests.h"
 #include "telemtry.h"
@@ -47,7 +50,7 @@ typedef struct{
 #pragma pack(pop)
 
 // Раскомментировать для debug on uart0
-// #define DEBUG_PRINT
+//#define DEBUG_PRINT
 
 int main(){
 /* ИНИЦИАЛИЗАЦИЯ */
@@ -77,9 +80,10 @@ int main(){
 
 	sd_init(); // Иициализация SD
 	nrf_init(); // Иициализация NRF
-#ifndef DEBUG_PRINT
+
+ #ifndef DEBUG_PRINT
 	iridium_init(); // Иициализация IRIDIUM
-#endif
+ #endif
 
 	packet_t pack; // Пакет телеметрии
 
@@ -97,8 +101,10 @@ int main(){
 #endif
 
 	while(1){
+
 		/* Генерируем пакет STANDARD */
-		pack.flag = 0x57;
+
+	/*	pack.flag = 0x57;
 
 		bmp_request(&pack.standard.bpress, &pack.standard.btemp);
 		ds_request(&pack.standard.dtemp);
@@ -115,10 +121,10 @@ int main(){
 		printf("\tSIZE %d\n", sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.standard));
 #endif
 		/* Срасываем в NRF */
-		nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.standard));
+	/*	nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.standard));
 
 		/* Генерируем пакет ADVANCED */
-		pack.flag = 0xad;
+	/*	pack.flag = 0xad;
 
 		cdm_request(&pack.advanced.conc);
 		mq7_request(&pack.advanced.mconc);
@@ -137,10 +143,42 @@ int main(){
 		printf("\tSIZE %d\n", sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.advanced));
 #endif
 		/* Срасываем в NRF */
-		nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.advanced));
+	/*	nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.advanced)); */
 
 		/* Генерируем пакет FULL */
 		pack.flag = 0xf4;
+
+		bmp_request(&pack.full.bpress, &pack.full.btemp);
+		ds_request(&pack.full.dtemp);
+		adxl_request(&pack.full.x, &pack.full.y, &pack.full.z);
+		cdm_request(&pack.full.conc);
+		mq7_request(&pack.full.mconc);
+		geiger_request(&pack.full.ticks);
+		gps_request(&pack.full.lon, &pack.full.lat, &pack.full.h, &pack.full.fix);
+		//float radiation_level=0;
+		//bool has_radiation;
+		//has_radiation = sides_geiger_get_uRh(&radiation_level);
+		time_request(&pack.time);
+
+#ifdef DEBUG_PRINT
+		printf("FULL %d\n", pack.flag);
+		printf("\tTIME %ld\n", pack.time);
+		printf("\tBMP %ld %ld\n", pack.full.bpress, pack.full.btemp);
+		printf("\tDS %d\n", pack.full.dtemp);
+		printf("\tADXL %f %f %f\n", pack.full.x, pack.full.y, pack.full.z);
+		printf("\tCDM %u\n", pack.full.conc);
+		printf("\tMQ7 %d\n", pack.full.mconc);
+		printf("\tGEIGER %ld\n", pack.full.ticks);
+		printf("\tGPS %f %f %f %d\n", pack.full.lon, pack.full.lat, pack.full.h, pack.full.fix);
+		printf("\tSIZE %d\n", sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
+		//if(has_radiation){printf("RADIATION: %f\n", radiation_level);};
+		printf("CO PPM: %f\n", sides_mq7_get_ppm());
+		sides_geiger_get_uRh_now();
+#endif
+
+
+		/* Генерируем пакет FULL */
+	/*	pack.flag = 0xf4;
 
 		bmp_request(&pack.full.bpress, &pack.full.btemp);
 		ds_request(&pack.full.dtemp);
@@ -164,34 +202,14 @@ int main(){
 		printf("\tGPS %f %f %f %d\n", pack.full.lon, pack.full.lat, pack.full.h, pack.full.fix);
 		printf("\tSIZE %d\n", sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
 #endif
+
+
 		/* Срасываем на SD */
-		sd_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
+		//sd_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
 
-		/* Генерируем пакет FULL */
-		pack.flag = 0xf4;
+	 	/* Срасываем в NRF */
+		//nrf_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
 
-		bmp_request(&pack.full.bpress, &pack.full.btemp);
-		ds_request(&pack.full.dtemp);
-		adxl_request(&pack.full.x, &pack.full.y, &pack.full.z);
-		cdm_request(&pack.full.conc);
-		mq7_request(&pack.full.mconc);
-		geiger_request(&pack.full.ticks);
-		gps_request(&pack.full.lon, &pack.full.lat, &pack.full.h, &pack.full.fix);
-
-		time_request(&pack.time);
-
-#ifdef DEBUG_PRINT
-		printf("FULL %d\n", pack.flag);
-		printf("\tTIME %ld\n", pack.time);
-		printf("\tBMP %ld %ld\n", pack.full.bpress, pack.full.btemp);
-		printf("\tDS %d\n", pack.full.dtemp);
-		printf("\tADXL %f %f %f\n", pack.full.x, pack.full.y, pack.full.z);
-		printf("\tCDM %u\n", pack.full.conc);
-		printf("\tMQ7 %d\n", pack.full.mconc);
-		printf("\tGEIGER %ld\n", pack.full.ticks);
-		printf("\tGPS %f %f %f %d\n", pack.full.lon, pack.full.lat, pack.full.h, pack.full.fix);
-		printf("\tSIZE %d\n", sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
-#endif
 		/* Срасываем в IRIDIUM */
 		iridium_telemetry_drop(&pack, sizeof(pack.flag) + sizeof(pack.time) + sizeof(pack.full));
 	}

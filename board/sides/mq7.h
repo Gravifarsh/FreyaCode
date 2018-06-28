@@ -11,5 +11,6 @@
 void sides_mq7_init();
 
 uint16_t sides_mq7_get();
+float sides_mq7_get_ppm();
 
 #endif /* MQ7_H_ */

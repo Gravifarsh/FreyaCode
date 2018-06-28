@@ -6,8 +6,8 @@
 #include "buses.h"
 #include "globals.h"
 
-#include "geiger.h"
-#include "mq7.h"
+#include "../sides/geiger.h"
+#include "../sides/mq7.h"
 
 void gps_init(){
 	if(gps != NULL) rscs_gps_deinit(gps);
